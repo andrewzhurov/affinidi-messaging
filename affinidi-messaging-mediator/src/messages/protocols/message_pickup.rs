@@ -17,7 +17,7 @@ use uuid::Uuid;
 
 use crate::{
     common::errors::{MediatorError, Session},
-    messages::ProcessMessageResponse,
+    messages::{MessageResponse, ProcessMessageResponse},
     tasks::websocket_streaming::{StreamingUpdate, StreamingUpdateState},
     SharedData,
 };
@@ -30,7 +30,7 @@ pub(crate) async fn status_request(
     msg: &Message,
     state: &SharedData,
     session: &Session,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(tracing::Level::DEBUG, "status_request",);
     async move {
         _validate_msg(msg, state, session).unwrap();
@@ -94,7 +94,7 @@ async fn generate_status_reply(
     thid: &str,
     force_live_delivery: bool,
     override_live_delivery: Option<bool>,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(tracing::Level::DEBUG, "generate_status_reply",);
 
     async move {
@@ -201,11 +201,11 @@ async fn generate_status_reply(
 
         debug!("status message =\n{:?}", status_msg);
 
-        Ok(ProcessMessageResponse {
+        Ok(Some(ProcessMessageResponse {
             store_message: false,
             force_live_delivery,
-            message: Some(status_msg),
-        })
+            message_response: MessageResponse::Message(status_msg),
+        }))
     }
     .instrument(_span)
     .await
@@ -216,7 +216,7 @@ pub(crate) async fn toggle_live_delivery(
     msg: &Message,
     state: &SharedData,
     session: &Session,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(tracing::Level::DEBUG, "toggle_live_delivery",);
     async move {
         _validate_msg(msg, state, session).unwrap();
@@ -307,7 +307,7 @@ pub(crate) async fn delivery_request(
     msg: &Message,
     state: &SharedData,
     session: &Session,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(tracing::Level::DEBUG, "delivery_request",);
     async move {
         _validate_msg(msg, state, session).unwrap();
@@ -381,11 +381,11 @@ pub(crate) async fn delivery_request(
 
             debug!("delivery message =\n{:?}", response_msg);
 
-            Ok(ProcessMessageResponse {
+            Ok(Some(ProcessMessageResponse {
                 store_message: false,
                 force_live_delivery: false,
-                message: Some(response_msg),
-            })
+                message_response: MessageResponse::Message(response_msg),
+            }))
         } else {
             generate_status_reply(state, session, &recipient_did_hash, &thid, false, None).await
         }
@@ -399,7 +399,7 @@ pub(crate) async fn messages_received(
     msg: &Message,
     state: &SharedData,
     session: &Session,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(tracing::Level::DEBUG, "messages_received",);
     async move {
         _validate_msg(msg, state, session).unwrap();

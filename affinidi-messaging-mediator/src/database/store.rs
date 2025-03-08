@@ -65,7 +65,7 @@ impl DatabaseHandler {
 
             debug!("result = {:?}", result);
 
-            debug!("Message hash({}) stored in database", message_hash);
+            println!("Message hash({}) stored in database", message_hash);
 
             Ok(message_hash)
         }

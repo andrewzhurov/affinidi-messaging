@@ -81,13 +81,13 @@ impl DIDResolverConfig {
     pub fn convert(&self) -> ClientConfig {
         let mut config = ClientConfigBuilder::default()
             .with_cache_capacity(self.cache_capacity.parse().unwrap_or(1000))
-            .with_cache_ttl(self.cache_ttl.parse().unwrap_or(300))
-            .with_network_timeout(self.network_timeout.parse().unwrap_or(5))
-            .with_network_cache_limit_count(self.network_limit.parse().unwrap_or(100));
+            .with_cache_ttl(self.cache_ttl.parse().unwrap_or(300));
+        // .with_network_timeout(self.network_timeout.parse().unwrap_or(5))
+        // .with_network_cache_limit_count(self.network_limit.parse().unwrap_or(100));
 
-        if let Some(address) = &self.address {
-            config = config.with_network_mode(address);
-        }
+        // if let Some(address) = &self.address {
+        //     config = config.with_network_mode(address);
+        // }
 
         config.build()
     }
@@ -189,8 +189,8 @@ impl Default for Config {
         let did_resolver_config = ClientConfigBuilder::default()
             .with_cache_capacity(1000)
             .with_cache_ttl(300)
-            .with_network_timeout(5)
-            .with_network_cache_limit_count(100)
+            // .with_network_timeout(5)
+            // .with_network_cache_limit_count(100)
             .build();
 
         Config {

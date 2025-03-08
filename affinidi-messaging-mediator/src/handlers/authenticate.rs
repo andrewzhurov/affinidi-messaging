@@ -47,6 +47,7 @@ pub async fn authentication_challenge(
     State(state): State<SharedData>,
     Json(body): Json<ChallengeBody>,
 ) -> Result<(StatusCode, Json<SuccessResponse<AuthenticationChallenge>>), AppError> {
+    println!("GOT authenticate/challenge");
     let session = Session {
         session_id: create_random_string(12),
         challenge: create_random_string(32),
@@ -93,6 +94,7 @@ pub async fn authentication_response(
     State(state): State<SharedData>,
     Json(body): Json<InboundMessage>,
 ) -> Result<(StatusCode, Json<SuccessResponse<AuthorizationResponse>>), AppError> {
+    println!("on authenticate_response");
     let s = serde_json::to_string(&body).unwrap();
 
     let mut envelope =
@@ -108,6 +110,7 @@ pub async fn authentication_response(
             }
         };
 
+    println!("abut to unpack Message");
     // Unpack the message
     let (msg, _) = match Message::unpack(
         &mut envelope,
@@ -126,6 +129,8 @@ pub async fn authentication_response(
             .into());
         }
     };
+
+    println!("received message: {msg:?}");
 
     // Only accepts AffinidiAuthenticate messages
     match msg.type_.as_str().parse::<MessageType>()? {

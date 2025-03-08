@@ -15,7 +15,7 @@ use tracing::error;
 /// ```
 #[derive(Clone)]
 pub struct Config<'a> {
-    pub(crate) my_did: Option<String>,
+    pub my_did: Option<String>,
     pub(crate) ssl_certificates: Vec<CertificateDer<'a>>,
     pub(crate) atm_api: String,
     pub(crate) atm_api_ws: String,

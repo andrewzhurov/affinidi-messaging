@@ -261,7 +261,7 @@ fn build_forward_message(
         }
     }
 
-    msg_builder = msg_builder.attachment(attachment);
+    msg_builder = msg_builder.attachment(attachment).to(next.to_string());
 
     let msg = msg_builder.finalize();
 
@@ -348,6 +348,7 @@ pub async fn wrap_in_forward(
     to_kids_limit: usize,
 ) -> Result<String> {
     let mut tos = routing_keys.to_vec();
+    println!("tos: {tos:?}");
 
     let mut nexts = tos.clone();
     nexts.remove(0);

@@ -103,7 +103,7 @@ async fn main() -> std::io::Result<()> {
         id: None,
         _type: "dm".into(),
         service_end_point: PeerServiceEndPoint::Long(PeerServiceEndPointLong {
-            uri: "https://localhost:7037/".into(),
+            uri: "https://localhost:7037/mediator/v1/inboud".into(),
             accept: vec!["didcomm/v2".into()],
             routing_keys: vec![],
         }),

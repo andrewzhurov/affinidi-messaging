@@ -77,6 +77,8 @@ impl Message {
     where
         S: SecretsResolver,
     {
+        debug!("trying to unpack message");
+        println!("trying to unpack print");
         //let mut msg = msg;
         let mut anoncrypted: Option<ParsedEnvelope>;
         let mut forwarded_msg: String;
@@ -89,6 +91,7 @@ impl Message {
                 "Parsed envelope not found",
             ));
         };
+        println!("parsed_jwe: {parsed_jwe:?}");
 
         let mut crypto_operations_count: usize = 0;
 
@@ -127,8 +130,10 @@ impl Message {
 
             break;
         }
+        println!("finished crypto loop");
+        println!("parsed jwe: {parsed_jwe:?}");
         let parsed_jwe = anoncrypted.clone().unwrap_or(parsed_jwe);
-        debug!("metadata = {:#?}", envelope.metadata);
+        println!("metadata = {:#?}", envelope.metadata);
 
         let authcrypted = _try_unpack_authcrypt(
             &parsed_jwe,
@@ -139,11 +144,15 @@ impl Message {
             crypto_operations_count,
         )
         .await?;
+        println!("authcrypted: {authcrypted:?}");
 
         let parsed_jwe = authcrypted.unwrap_or(parsed_jwe);
+        println!("parsed_jwe: {parsed_jwe:?}");
 
         let signed = _try_unpack_sign(&parsed_jwe, did_resolver, options, envelope).await?;
+        println!("signed: {signed:?}");
         let parsed_jwe = signed.unwrap_or(parsed_jwe);
+        println!("parsed_jwe2: {parsed_jwe:?}");
 
         let msg = _try_unpack_plaintext(&parsed_jwe, did_resolver, envelope)
             .await?

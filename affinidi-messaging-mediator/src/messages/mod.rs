@@ -14,6 +14,20 @@ use std::{default, str::FromStr, time::SystemTime};
 pub mod inbound;
 pub mod protocols;
 
+pub enum CoordinateMediationV3 {
+    MediateRequest,
+    MediateDeny,
+    MediateGrant,
+    RecipientUpdate,
+    RecipientUpdateResponse,
+    RecipientQuery,
+    Recipient,
+}
+
+pub enum CoordinateMediation {
+    V3(CoordinateMediationV3),
+}
+
 pub enum MessageType {
     AffinidiAuthenticate,            // Affinidi Authentication Response
     ForwardRequest,                  // DidComm Routing 2.0 Forward Request
@@ -59,7 +73,7 @@ impl MessageType {
         message: &Message,
         state: &SharedData,
         session: &Session,
-    ) -> Result<ProcessMessageResponse, MediatorError> {
+    ) -> Result<Option<ProcessMessageResponse>, MediatorError> {
         match self {
             Self::TrustPing => ping::process(message, session),
             Self::MessagePickupStatusRequest => {
@@ -83,11 +97,17 @@ impl MessageType {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
+pub(crate) enum MessageResponse {
+    Message(Message),
+    PackedMessage { to: String, packed_message: String },
+}
+
+#[derive(Debug)]
 pub(crate) struct ProcessMessageResponse {
     pub store_message: bool,
     pub force_live_delivery: bool, // Will force a live delivery attempt.
-    pub message: Option<Message>,
+    pub message_response: MessageResponse,
 }
 
 #[derive(Debug)]
@@ -110,7 +130,7 @@ pub(crate) trait MessageHandler {
         &self,
         state: &SharedData,
         session: &Session,
-    ) -> Result<ProcessMessageResponse, MediatorError>;
+    ) -> Result<Option<ProcessMessageResponse>, MediatorError>;
 
     /// Uses the incoming unpack metadata to determine best way to pack the message
     async fn pack<S>(
@@ -131,7 +151,7 @@ impl MessageHandler for Message {
         &self,
         state: &SharedData,
         session: &Session,
-    ) -> Result<ProcessMessageResponse, MediatorError> {
+    ) -> Result<Option<ProcessMessageResponse>, MediatorError> {
         let msg_type = self.type_.as_str().parse::<MessageType>()?;
 
         // Check if message expired

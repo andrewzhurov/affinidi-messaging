@@ -68,6 +68,10 @@ impl Attachment {
             },
         })
     }
+
+    pub fn rkyv(bytes: Vec<u8>) -> AttachmentBuilder {
+        AttachmentBuilder::new(AttachmentData::Rkyv { value: bytes })
+    }
 }
 
 pub struct AttachmentBuilder {
@@ -82,7 +86,7 @@ pub struct AttachmentBuilder {
 }
 
 impl AttachmentBuilder {
-    fn new(data: AttachmentData) -> Self {
+    pub fn new(data: AttachmentData) -> Self {
         AttachmentBuilder {
             data,
             id: None,
@@ -135,6 +139,7 @@ impl AttachmentBuilder {
             AttachmentData::Base64 { ref mut value } => value.jws = Some(jws),
             AttachmentData::Json { ref mut value } => value.jws = Some(jws),
             AttachmentData::Links { ref mut value } => value.jws = Some(jws),
+            _ => (),
         }
 
         self
@@ -174,6 +179,9 @@ pub enum AttachmentData {
     Links {
         #[serde(flatten)]
         value: LinksAttachmentData,
+    },
+    Rkyv {
+        value: Vec<u8>,
     },
 }
 

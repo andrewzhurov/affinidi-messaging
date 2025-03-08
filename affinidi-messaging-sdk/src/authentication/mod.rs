@@ -8,8 +8,10 @@ use uuid::Uuid;
 use crate::{
     errors::ATMError,
     messages::{AuthenticationChallenge, AuthorizationResponse, SuccessResponse},
+    utils::Debuggable,
     ATM,
 };
+use std::collections::HashMap;
 
 impl<'c> ATM<'c> {
     /// Authenticate the SDK against Affinidi Trusted Messaging
@@ -30,12 +32,29 @@ impl<'c> ATM<'c> {
             debug!("Retrieving authentication challenge...");
 
             let (my_did, atm_did) = self.dids()?;
+            // let my_did = "example";
+            // debug!(
+            //     "body: {:?}",
+            //     format!("{{\"did\": \"{}\"}}", my_did).to_string()
+            // );
+            // let body = HashMap::from([("did", my_did)]);
+            // debug!(
+            //     "url: {:?}",
+            //     self.client
+            //         .post(format!("{}/authenticate/challenge", self.config.atm_api))
+            //         .build()
+            //         .unwrap()
+            //         .url()
+            //         .scheme()
+            // );
             // Step 1. Get the challenge
             let res = self
                 .client
                 .post(format!("{}/authenticate/challenge", self.config.atm_api))
-                .header("Content-Type", "application/json")
+                .header("Content-Type", "application/json") // fails with text/plain as well
                 .body(format!("{{\"did\": \"{}\"}}", my_did).to_string())
+                // .json(&body) // fails
+                .dbg()
                 .send()
                 .await
                 .map_err(|e| {

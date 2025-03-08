@@ -253,7 +253,8 @@ impl<'c> ATM<'c> {
                                         }
 
                                         // Send the message to the SDK if next_flag is set
-                                        if cache.next_flag {
+                                        if true //cache.next_flag
+                                        {
                                             cache.next_flag = false;
                                             to_sdk.send(WSCommand::MessageReceived(message, Box::new(meta))).await.map_err(|err| {
                                                 ATMError::TransportError(format!("Could not send message to SDK: {:?}", err))

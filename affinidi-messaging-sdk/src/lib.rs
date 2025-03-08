@@ -1,10 +1,15 @@
 use affinidi_did_resolver_cache_sdk::DIDCacheClient;
 use affinidi_messaging_didcomm::secrets::Secret;
+use affinidi_messaging_didcomm::{Attachment, AttachmentData, Message};
 use config::Config;
 use errors::ATMError;
 use messages::AuthorizationResponse;
 use reqwest::{Certificate, Client};
 use resolvers::secrets_resolver::AffinidiSecrets;
+use rkyv::bytecheck::CheckBytes;
+use rkyv::de::Pool;
+use rkyv::rancor::{Error, Source, Strategy};
+use rkyv::{api::high::HighValidator, Archive, Deserialize};
 use rustls::{ClientConfig, RootCertStore};
 use ssi::dids::Document;
 use std::sync::Arc;
@@ -24,6 +29,7 @@ pub mod protocols;
 pub mod public;
 mod resolvers;
 pub mod transports;
+pub mod utils;
 
 pub mod websockets {
     #[doc(inline)]
@@ -31,7 +37,7 @@ pub mod websockets {
 }
 
 pub struct ATM<'c> {
-    pub(crate) config: Config<'c>,
+    pub config: Config<'c>,
     did_resolver: DIDCacheClient,
     secrets_resolver: AffinidiSecrets,
     pub(crate) client: Client,
@@ -215,5 +221,72 @@ impl<'c> ATM<'c> {
         };
 
         Ok((my_did, atm_did))
+    }
+
+    pub fn try_next_message(&mut self) -> Option<Message> {
+        // if self.ws_recv_stream.is_none() {
+        //     self.start_websocket_task().await.unwrap();
+        // }
+
+        if let Some(ws_recv_stream) = self.ws_recv_stream.as_mut() {
+            if let Ok(WSCommand::MessageReceived(msg, _meta)) = ws_recv_stream.try_recv() {
+                return Some(msg);
+            }
+        }
+        None
+    }
+
+    pub fn try_next_rkyv_message<T>(&mut self) -> Option<T>
+    where
+        T: Archive,
+        T::Archived:
+            for<'a> CheckBytes<HighValidator<'a, Error>> + Deserialize<T, Strategy<Pool, Error>>,
+    {
+        if let Some(ws_recv_stream) = self.ws_recv_stream.as_mut() {
+            if let Ok(WSCommand::MessageReceived(
+                Message {
+                    attachments: Some(attachments),
+                    ..
+                },
+                _meta,
+            )) = ws_recv_stream.try_recv()
+            {
+                if let Some(Attachment {
+                    data: AttachmentData::Rkyv { ref value },
+                    ..
+                }) = attachments.first()
+                {
+                    if let Ok(rkyv_value) = rkyv::from_bytes::<T, Error>(value) {
+                        return Some(rkyv_value);
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    pub async fn next_message(&mut self) -> Option<Message> {
+        if self.ws_recv_stream.is_none() {
+            println!("ws_recv_stream is none, starting websocket task");
+            self.start_websocket_task().await.unwrap();
+        }
+
+        if let Some(ws_recv_stream) = self.ws_recv_stream.as_mut() {
+            if let Some(WSCommand::MessageReceived(msg, _meta)) = ws_recv_stream.recv().await {
+                return Some(msg);
+            }
+        }
+        None
+    }
+
+    pub fn my_did(&self) -> Result<String, ATMError> {
+        Ok(self
+            .config
+            .my_did
+            .as_ref()
+            .ok_or(ATMError::DIDError(
+                "Tried to get my_did, it is None".to_string(),
+            ))?
+            .clone())
     }
 }

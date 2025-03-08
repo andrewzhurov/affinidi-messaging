@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::{
     common::errors::{MediatorError, Session},
-    messages::ProcessMessageResponse,
+    messages::{MessageResponse, ProcessMessageResponse},
 };
 
 // Reads the body of an incoming trust-ping and whether to generate a return ping message
@@ -29,7 +29,7 @@ impl Default for Ping {
 pub(crate) fn process(
     msg: &Message,
     session: &Session,
-) -> Result<ProcessMessageResponse, MediatorError> {
+) -> Result<Option<ProcessMessageResponse>, MediatorError> {
     let _span = span!(
         tracing::Level::DEBUG,
         "trust_ping",
@@ -112,13 +112,13 @@ pub(crate) fn process(
 
         debug!("response_msg: {:?}", response_msg);
 
-        Ok(ProcessMessageResponse {
+        Ok(Some(ProcessMessageResponse {
             store_message: true,
             force_live_delivery: false,
-            message: Some(response_msg),
-        })
+            message_response: MessageResponse::Message(response_msg),
+        }))
     } else {
         debug!("No response requested");
-        Ok(ProcessMessageResponse::default())
+        Ok(None)
     }
 }

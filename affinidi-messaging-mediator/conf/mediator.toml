@@ -11,7 +11,7 @@ listen_address = "${LISTEN_ADDRESS:0.0.0.0:7037}"
 ### Supported formats:
 ### - did://did:peer:<version>:<base58-encoded-verification-key>
 ### - aws_parameter_store://<parameter_name> - Load DID from AWS Systems Manager Parameter Store
-mediator_did = "${MEDIATOR_DID:did://did:peer:2.Vz6MkiToqovww7vYtxm1xNM15u9JzqzUFZ1k7s7MazYJUyAxv.EzQ3shQLqRUza6AMJFbPuMdvFRFWm1wKviQRnQSC1fScovJN4s.SeyJ0IjoiRElEQ29tbU1lc3NhZ2luZyIsInMiOnsidXJpIjoiaHR0cHM6Ly8xMjcuMC4wLjE6NzAzNyIsImEiOlsiZGlkY29tbS92MiJdLCJyIjpbXX19}"
+mediator_did = "${MEDIATOR_DID:did://did:peer:2.Vz6MkpecMavE3PCVdJByEecgnYbkEmZKgG3EForXeBUeh9A7x.EzQ3shsep9qo3s6xdpHdJaMaj9Vkz2WysdC5mcNPpUQ8L8Wg2i.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMzcvbWVkaWF0b3IvdjEvaW5ib3VkIiwiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwicm91dGluZ19rZXlzIjpbXX0sImlkIjpudWxsfQ}"
 #mediator_did = "${MEDIATOR_DID:aws_parameter_store:///dev/atn/atm/global/did}"
 
 ### mediator_secrets: Secrets of the mediator
@@ -42,7 +42,7 @@ ws_size_limit = "${WS_SIZE_LIMIT:10485760}"
 [database]
 ### database_url: URL of the Redis compatable database
 ### Default: redis://127.0.0.1/
-database_url = "${REDIS_URL:redis://127.0.0.1/}"
+database_url = "${REDIS_URL:redis://localhost:6379}"
 
 ### database_pool_size: Number of connections to the database
 ### Default: 10
@@ -94,7 +94,7 @@ ssl_key_file = "${SSL_KEY_FILE:conf/keys/end.key}"
 ### Supported Formats:
 ### - string://<key> - Use the key as is
 ### - aws_secrets://<secret_name> - Load the key from AWS Secrets Manager
-jwt_authorization_secret = "${AUTHORIZATION_SECRET:string://MFECAQEwBQYDK2VwBCIEIGaI0daTTfC-ys6xGZFrR2gXWGzOPr1UdEnRldEVmS6lgSEA_f9ZL1dQ3r7cALSXRZtZUkI_5sOca-6-SgLnbuPdD3k}"
+jwt_authorization_secret = "${AUTHORIZATION_SECRET:string://MFECAQEwBQYDK2VwBCIEIGUwFM-jAB68OFKtjFF23fQNSxc0uEOX_oPx9UVnmgJagSEA9jDhS6ioNQRGKoVMnqIDlwyR43U77j0RqDz0adT411I}"
 #jwt_authorization_secret = "${AUTHORIZATION_SECRET:aws_secrets://dev/atn/atm/mediator/global/jwt_secret}"
 
 ### cors_allow_origin: Comma separated list of origins that are allowed to access this service

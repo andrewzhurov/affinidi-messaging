@@ -1,3 +1,5 @@
+#![feature(async_closure)]
+
 use std::fmt::Debug;
 
 use affinidi_did_resolver_cache_sdk::DIDCacheClient;

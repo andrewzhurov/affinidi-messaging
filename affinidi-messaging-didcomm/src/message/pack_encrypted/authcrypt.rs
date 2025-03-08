@@ -37,7 +37,8 @@ pub(crate) async fn authcrypt<'sr>(
     // Now we resolve separately in authcrypt, anoncrypt and sign
     let to_ddoc = match did_resolver.resolve(to_did).await {
         Ok(response) => response.doc,
-        Err(_) => {
+        Err(err) => {
+            println!("{err:?}");
             return Err(err_msg(
                 ErrorKind::DIDNotResolved,
                 "Recipient did not found",
@@ -144,19 +145,25 @@ pub(crate) async fn authcrypt<'sr>(
 
     // Looking for first sender key that has supported crypto and intersects with recipient keys
     // by key alg
+    println!("from_keys: {from_keys:?}");
     let from_key = from_keys
         .iter()
         .filter(|key| {
             if let Some(jwk) = key.get_jwk() {
+                println!("jwk: {jwk:?}");
                 key.key_alg(&jwk) != KnownKeyAlg::Unsupported
             } else {
                 false
             }
         })
         .find(|from_key| {
+            println!("from_key: {from_key:?}");
             if let Some(from_jwk) = from_key.get_jwk() {
+                println!("from_jwk: {from_jwk:?}");
                 to_keys.iter().any(|to_key| {
+                    println!("to_key: {to_key:?}");
                     if let Some(to_jwk) = to_key.get_jwk() {
+                        println!("to_jwk: {to_jwk:?}");
                         to_key.key_alg(&to_jwk) == from_key.key_alg(&from_jwk)
                     } else {
                         false
