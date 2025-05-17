@@ -30,7 +30,7 @@ impl Default for FetchOptions {
     }
 }
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Fetches any available messages from your ATM inbox
     /// This differs from the `get_messages()` function in that you don't need to know the message_id in advance
     ///

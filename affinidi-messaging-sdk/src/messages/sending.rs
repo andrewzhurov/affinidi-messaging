@@ -29,4 +29,4 @@ pub struct InboundMessageList {
 }
 impl GenericDataStruct for InboundMessageList {}
 
-impl<'c> ATM<'c> {}
+impl ATM {}

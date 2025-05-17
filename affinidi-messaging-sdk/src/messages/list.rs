@@ -3,7 +3,7 @@ use crate::{errors::ATMError, messages::SuccessResponse, ATM};
 use sha256::digest;
 use tracing::{debug, span, Level};
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Returns a list of messages that are stored in the ATM
     /// # Parameters
     /// - `did`: The DID to list messages for

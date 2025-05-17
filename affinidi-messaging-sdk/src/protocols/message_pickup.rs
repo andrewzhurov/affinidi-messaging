@@ -77,7 +77,7 @@ impl MessagePickup {
     /// Returns a StatusReply if successful
     pub async fn send_status_request(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         recipient_did: Option<String>,
         mediator_did: Option<String>,
         wait: Option<Duration>,
@@ -183,7 +183,7 @@ impl MessagePickup {
     /// Sends a Message Pickup 3.0 `Live Delivery` message
     pub async fn toggle_live_delivery(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         live_delivery: bool,
     ) -> Result<(), ATMError> {
         let _span = span!(Level::DEBUG, "toggle_live_delivery",).entered();
@@ -239,7 +239,7 @@ impl MessagePickup {
     /// NOTE: You still need to delete the message from the server after receiving it
     pub async fn live_stream_next(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         wait: Duration,
     ) -> Result<Option<(Message, Box<UnpackMetadata>)>, ATMError> {
         let _span = span!(Level::DEBUG, "live_stream_next");
@@ -302,7 +302,7 @@ impl MessagePickup {
     /// NOTE: You still need to delete the message from the server after receiving it
     pub async fn live_stream_get(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         msg_id: &str,
         wait: Duration,
     ) -> Result<Option<(Message, Box<UnpackMetadata>)>, ATMError> {
@@ -378,7 +378,7 @@ impl MessagePickup {
     /// wait          : Time Duration to wait for a response from websocket. Default (10 Seconds)
     pub async fn send_delivery_request(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         recipient_did: Option<String>,
         mediator_did: Option<String>,
         limit: Option<usize>,
@@ -490,7 +490,7 @@ impl MessagePickup {
     /// Iterates through each attachment and unpacks each message into an array to return
     pub(crate) async fn _handle_delivery(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         message: &Message,
     ) -> Result<Vec<(Message, UnpackMetadata)>, ATMError> {
         let mut response: Vec<(Message, UnpackMetadata)> = Vec::new();
@@ -554,7 +554,7 @@ impl MessagePickup {
     /// A status reply will be returned if successful
     pub async fn send_messages_received(
         &self,
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         recipient_did: Option<String>,
         mediator_did: Option<String>,
         list: &Vec<String>,

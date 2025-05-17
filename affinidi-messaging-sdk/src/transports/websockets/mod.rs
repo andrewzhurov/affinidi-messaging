@@ -6,7 +6,7 @@ use ws_handler::WSCommand;
 pub mod sending;
 pub mod ws_handler;
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Starts websocket connection to the ATM API
     /// Example:
     /// ```ignore

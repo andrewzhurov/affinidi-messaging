@@ -3,7 +3,7 @@ use tracing::{debug, span, Instrument, Level};
 
 use crate::{errors::ATMError, ATM};
 
-impl<'c> ATM<'c> {
+impl ATM {
     pub async fn unpack(&mut self, message: &str) -> Result<(Message, UnpackMetadata), ATMError> {
         let _span = span!(Level::DEBUG, "unpack",);
 

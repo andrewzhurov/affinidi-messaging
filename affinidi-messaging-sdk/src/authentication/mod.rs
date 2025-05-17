@@ -13,7 +13,7 @@ use crate::{
 };
 use std::collections::HashMap;
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Authenticate the SDK against Affinidi Trusted Messaging
     pub async fn authenticate(&mut self) -> Result<AuthorizationResponse, ATMError> {
         if self.authenticated {

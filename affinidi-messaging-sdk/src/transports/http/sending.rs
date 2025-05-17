@@ -28,7 +28,7 @@ pub enum GRIDMessage {
     Inc,
 }
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// send_didcomm_message
     /// - msg: Packed DIDComm message that we want to send
     /// - return_response: Whether to return the response from the API
@@ -150,32 +150,13 @@ impl<'c> ATM<'c> {
         Ok(())
     }
 
-    pub async fn send_grid_message(
+    pub async fn send_bytes_message(
         &mut self,
         protocol: &str,
         to: &str,
-        grid_message: GRIDMessage,
-        message: &str,
+        bytes: Vec<u8>,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let _span = span!(Level::DEBUG, "send",).entered();
-        debug!("send({to}, {message})");
-        // let body = std::collections::HashMap::from([("key".to_string(), "val".to_string())]);
-        // debug!("example reqwest");
-        // let resp = reqwest::Client::new()
-        //     .post("http://httpbin.org/post")
-        //     .json(&body)
-        //     .send()
-        //     .await
-        //     .unwrap();
-        // debug!("example resp {resp:#?}");
-
-        // let mut arena = Arena::new();
-        // let bytes = to_bytes_with_alloc::<_, Error>(content, arena.acquire());
-
-        let grid_message_av = rkyv::to_bytes::<Error>(&grid_message).unwrap();
-        let grid_message_bytes = grid_message_av.to_vec();
-        let parsed_grid_message = rkyv::from_bytes::<GRIDMessage, Error>(&grid_message_bytes)?;
-        assert_eq!(grid_message, parsed_grid_message);
+        let _span = span!(Level::DEBUG, "send_bytes_message",).entered();
 
         let msg = Message::build(
             Uuid::new_v4().into(),
@@ -183,20 +164,20 @@ impl<'c> ATM<'c> {
             serde_json::Value::Null,
         )
         .to(to.to_string())
-        .attachment(Attachment::rkyv(grid_message_bytes).finalize())
+        .attachment(Attachment::bytes(bytes).finalize())
         .finalize();
 
         let (env, env_meta) = self
             .pack_encrypted(&msg, to, Some(&self.my_did()?), None)
             .await?;
-        println!("env_meta: {env_meta:?}");
+        debug!("env_meta: {env_meta:?}");
 
         let to_endpoint = env_meta
             .messaging_service
             .ok_or(ATMError::TransportError("No messaging service".to_string()))?
             .service_endpoint;
 
-        debug!("Sending grid message to endpoint: {to_endpoint}");
+        debug!("Sending bytes message to endpoint: {to_endpoint}");
         let res = self.client.post(&to_endpoint).body(env).send().await?;
         debug!("API response: {res:?}");
 

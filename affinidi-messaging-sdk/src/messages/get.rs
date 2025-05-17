@@ -8,7 +8,7 @@ use crate::{
 
 use super::GetMessagesRequest;
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Returns a list of messages that are stored in the ATM
     /// - messages : List of message IDs to retrieve
     pub async fn get_messages(

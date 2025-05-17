@@ -14,9 +14,9 @@ use tracing::error;
 /// let config = Config::builder().build();
 /// ```
 #[derive(Clone)]
-pub struct Config<'a> {
+pub struct Config {
     pub my_did: Option<String>,
-    pub(crate) ssl_certificates: Vec<CertificateDer<'a>>,
+    pub(crate) ssl_certificates: Vec<CertificateDer<'static>>,
     pub(crate) atm_api: String,
     pub(crate) atm_api_ws: String,
     pub(crate) atm_did: Option<String>,
@@ -28,7 +28,7 @@ pub struct Config<'a> {
     pub(crate) did_resolver: Option<DIDCacheClient>,
 }
 
-impl<'a> Config<'a> {
+impl Config {
     /// Returns a builder for `Config`
     /// Example:
     /// ```
@@ -168,7 +168,7 @@ impl ConfigBuilder {
         self
     }
 
-    pub fn build<'a>(self) -> Result<Config<'a>, ATMError> {
+    pub fn build(self) -> Result<Config, ATMError> {
         // Process any custom SSL certificates
         let mut certs = vec![];
         let mut failed_certs = false;

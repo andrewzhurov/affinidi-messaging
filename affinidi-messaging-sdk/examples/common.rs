@@ -20,7 +20,7 @@ struct Args {
 }
 
 pub struct ConfigureAtmResult {
-    pub atm: ATM<'static>,
+    pub atm: ATM,
     pub atm_did: String,
     pub actor_did: String,
 }

@@ -1,7 +1,7 @@
 use crate::{errors::ATMError, messages::SuccessResponse, ATM};
 use tracing::{debug, span, Level};
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Returns a list of messages that are stored in the ATM
     /// - messages : List of message IDs to retrieve
     pub async fn well_known_did(&mut self) -> Result<String, ATMError> {

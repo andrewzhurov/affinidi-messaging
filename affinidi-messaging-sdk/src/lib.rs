@@ -36,8 +36,8 @@ pub mod websockets {
     pub use crate::transports::websockets::*;
 }
 
-pub struct ATM<'c> {
-    pub config: Config<'c>,
+pub struct ATM {
+    pub config: Config,
     did_resolver: DIDCacheClient,
     secrets_resolver: AffinidiSecrets,
     pub(crate) client: Client,
@@ -66,10 +66,10 @@ pub struct ATM<'c> {
 ///
 /// let response = atm.ping("did:example:123", true);
 /// ```
-impl<'c> ATM<'c> {
+impl ATM {
     /// Creates a new instance of the SDK with a given configuration
     /// You need to add at least the DID Method for the SDK DID to work
-    pub async fn new(config: Config<'c>) -> Result<ATM<'c>, ATMError> {
+    pub async fn new(config: Config) -> Result<ATM, ATMError> {
         // Set a process wide default crypto provider.
         let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
 

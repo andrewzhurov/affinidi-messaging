@@ -35,9 +35,9 @@ impl TrustPing {
     ///
     /// Returns: The message ID and sha256 hash of the ping message
     /// [^note]: Anonymous pings cannot expect a response, the SDK will automatically set this to false if anonymous is true
-    pub async fn send_ping<'c>(
+    pub async fn send_ping(
         &self,
-        atm: &'c mut ATM<'_>,
+        atm: &mut ATM,
         to_did: &str,
         signed: bool,
         expect_response: bool,

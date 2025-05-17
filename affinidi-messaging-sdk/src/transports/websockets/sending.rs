@@ -7,7 +7,7 @@ use crate::{
 use sha256::digest;
 use tracing::{debug, span, Level};
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// send_didcomm_message
     /// - message: Packed DIDComm message that we want to send
     /// - message_id: The message ID of the message

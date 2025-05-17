@@ -5,7 +5,7 @@ use tracing::{span, Instrument, Level};
 
 use crate::{errors::ATMError, ATM};
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Pack a message for sending to a recipient
     /// from: if None, then will use anonymous encryption
     /// sign_by: If None, then will not sign the message

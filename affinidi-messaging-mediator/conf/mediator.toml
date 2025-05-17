@@ -11,7 +11,7 @@ listen_address = "${LISTEN_ADDRESS:0.0.0.0:7037}"
 ### Supported formats:
 ### - did://did:peer:<version>:<base58-encoded-verification-key>
 ### - aws_parameter_store://<parameter_name> - Load DID from AWS Systems Manager Parameter Store
-mediator_did = "${MEDIATOR_DID:did://did:peer:2.Vz6MkpecMavE3PCVdJByEecgnYbkEmZKgG3EForXeBUeh9A7x.EzQ3shsep9qo3s6xdpHdJaMaj9Vkz2WysdC5mcNPpUQ8L8Wg2i.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMzcvbWVkaWF0b3IvdjEvaW5ib3VkIiwiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwicm91dGluZ19rZXlzIjpbXX0sImlkIjpudWxsfQ}"
+mediator_did = "${MEDIATOR_DID:did://did:peer:2.Vz6MkrLiQHcexRrVxw12iagSRMw7RuZq8s3gUFYaH9UasQiCP.EzQ3shWBNZbdak9AfKrR5GpVxaMikrxJQhQhAMCmPzGzCNqt3N.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMzcvbWVkaWF0b3IvdjEvaW5ib3VkIiwiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwicm91dGluZ19rZXlzIjpbXX0sImlkIjpudWxsfQ}"
 #mediator_did = "${MEDIATOR_DID:aws_parameter_store:///dev/atn/atm/global/did}"
 
 ### mediator_secrets: Secrets of the mediator

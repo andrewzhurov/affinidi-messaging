@@ -72,6 +72,10 @@ impl Attachment {
     pub fn rkyv(bytes: Vec<u8>) -> AttachmentBuilder {
         AttachmentBuilder::new(AttachmentData::Rkyv { value: bytes })
     }
+
+    pub fn bytes(bytes: Vec<u8>) -> AttachmentBuilder {
+        AttachmentBuilder::new(AttachmentData::Bytes { value: bytes })
+    }
 }
 
 pub struct AttachmentBuilder {
@@ -181,6 +185,9 @@ pub enum AttachmentData {
         value: LinksAttachmentData,
     },
     Rkyv {
+        value: Vec<u8>,
+    },
+    Bytes {
         value: Vec<u8>,
     },
 }

@@ -152,10 +152,10 @@ pub(crate) enum WSCommand {
     TimeOut(String), // SDK request timed out, contains msg_id we were looking for
 }
 
-impl<'c> ATM<'c> {
+impl ATM {
     pub(crate) async fn _create_socket(
         &mut self,
-        //atm: &mut ATM<'_>,
+        //atm: &mut ATM,
     ) -> Result<WebSocketStream<MaybeTlsStream<TcpStream>>, ATMError> {
         // Check if authenticated
         let tokens = self.authenticate().await?;
@@ -202,7 +202,7 @@ impl<'c> ATM<'c> {
     /// to_sdk is an MPSC channel used to send messages to the main thread that were received from the websocket
     /// web_socket is the websocket stream itself which can be used to send and receive messages
     pub(crate) async fn ws_handler(
-        atm: &mut ATM<'_>,
+        atm: &mut ATM,
         from_sdk: &mut Receiver<WSCommand>,
         to_sdk: &Sender<WSCommand>,
         // web_socket: &mut WebSocketStream<MaybeTlsStream<TcpStream>>,

@@ -6,7 +6,7 @@ use super::{DeleteMessageRequest, DeleteMessageResponse};
 
 const MAX_DELETED_MESSAGES: usize = 100;
 
-impl<'c> ATM<'c> {
+impl ATM {
     /// Delete messages from ATM
     /// - messages: List of message_ids to delete
     pub async fn delete_messages(
